@@ -5,43 +5,90 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.mohsin_ahmed.capturetext.DetectedTextActivity">
+    tools:context="com.techlogix.capturetext.DetectedTextActivity">
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="6"
-        android:orientation="vertical">
+        android:layout_weight="6">
 
-        <TextView
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:fontFamily="@font/quicksand_medium"
-            android:text="Detected Text:"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-            android:textSize="16sp" />
+            android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/detectedText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
-            android:fontFamily="@font/quicksand_medium"
-            android:textSize="14sp"
-            tools:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi aliquam fringilla tortor, sed sollicitudin magna fermentum in. Phasellus tristique porta quam, ut eleifend nulla pellentesque ut. Etiam congue faucibus gravida. Nulla aliquet luctus finibus." />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:fontFamily="@font/quicksand_medium"
+                android:text="Detected Text:"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                android:textSize="22sp" />
 
-    </LinearLayout>
+            <TextView
+                android:id="@+id/detectedText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:fontFamily="@font/quicksand_medium"
+                android:textSize="18sp"
+                tools:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi aliquam fringilla tortor, sed sollicitudin magna fermentum in. Phasellus tristique porta quam, ut eleifend nulla pellentesque ut. Etiam congue faucibus gravida. Nulla aliquet luctus finibus." />
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="24dp"
+                android:fontFamily="@font/quicksand_medium"
+                android:text="Detected Language(s):"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                android:textSize="22sp" />
+
+            <TextView
+                android:id="@+id/detectedLanguages"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:fontFamily="@font/quicksand_medium"
+                android:textSize="18sp"
+                tools:text="English, Spanish, German, French" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="24dp"
+                android:fontFamily="@font/quicksand_medium"
+                android:text="Confidence Level:"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                android:textSize="22sp" />
+
+            <TextView
+                android:id="@+id/confidenceLevel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:fontFamily="@font/quicksand_medium"
+                android:textSize="18sp"
+                tools:text="[0.8] - High Confidence" />
+
+
+        </LinearLayout>
+
+    </ScrollView>
 
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_margin="16dp"
         android:layout_weight="1"
-        app:cardCornerRadius="8dp"
-        app:cardElevation="6dp">
+        app:cardCornerRadius="8dp">
 
         <LinearLayout
             android:layout_width="match_parent"

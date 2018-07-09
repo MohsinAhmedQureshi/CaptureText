@@ -2,5 +2,5 @@
 <paths>
     <external-path
         name="my_images"
-        path="Android/data/com.mohsin_ahmed.capturetext/files/Pictures" />
+        path="Android/data/com.techlogix.capturetext/files/Pictures" />
 </paths>

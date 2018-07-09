@@ -1,4 +1,4 @@
-package com.mohsin_ahmed.capturetext;
+package com.techlogix.capturetext;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;

@@ -1,4 +1,4 @@
-package com.mohsin_ahmed.capturetext;
+package com.techlogix.capturetext;
 
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -10,7 +10,7 @@ import android.widget.Toast;
 
 public class DetectedTextActivity extends AppCompatActivity {
 
-    TextView detectedText;
+    TextView detectedText, confidenceText, languagesText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,6 +19,12 @@ public class DetectedTextActivity extends AppCompatActivity {
 
         detectedText = (TextView) findViewById(R.id.detectedText);
         detectedText.setText(getIntent().getStringExtra("TranslatedText"));
+
+        confidenceText = (TextView) findViewById(R.id.confidenceLevel);
+        confidenceText.setText(getIntent().getStringExtra("ConfidenceText"));
+
+        languagesText = (TextView) findViewById(R.id.detectedLanguages);
+        languagesText.setText(getIntent().getStringExtra("LanguagesText"));
     }
 
     public void onClickCopy(View view) {

@@ -1,4 +1,4 @@
-package com.mohsin_ahmed.capturetext;
+package com.techlogix.capturetext;
 
 import org.junit.Test;
 
