@@ -47,15 +47,15 @@ import java.util.Locale;
 public class MainActivity extends AppCompatActivity {
 
     public static final int PERMISSION_REQUEST_CODE = 123;
+    public static final int PICK_IMAGE_REQUEST = 2;
     static final int REQUEST_TAKE_PHOTO = 1;
     private static final String TAG = "Rotation Value Error";
     private static final String TAG2 = "Image Creation Error";
     private static final SparseIntArray ORIENTATIONS = new SparseIntArray();
-
     ImageView capturedImage;
     String mCurrentPhotoPath;
     Uri savedPhotoUri;
-    Bitmap rotatedBitmap;
+    Bitmap selectedBitmap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void onClickDetect(View v) {
         FirebaseApp firebaseApp = FirebaseApp.initializeApp(MainActivity.this);
-        FirebaseVisionImage image = FirebaseVisionImage.fromBitmap(rotatedBitmap);
+        FirebaseVisionImage image = FirebaseVisionImage.fromBitmap(selectedBitmap);
         if (isNetworkAvailable()) {
             // NETWORK AVAILABLE ------- ONLINE DETECTOR
 
@@ -223,6 +223,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+
         if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
             if (data != null) {
                 Bundle extras = data.getExtras();
@@ -237,8 +238,30 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }
+
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
+
+            Uri uri = data.getData();
+
+            try {
+                selectedBitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
+                // Log.d(TAG, String.valueOf(bitmap));
+                capturedImage.setImageBitmap(selectedBitmap);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
     }
 
+    public void onClickGallery(View view) {
+        Intent intent = new Intent();
+// Show only images, no videos or anything else
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+// Always show the chooser (if there are multiple options available)
+        startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);
+    }
 
     private void setImageView() throws IOException {
         BitmapFactory.Options bounds = new BitmapFactory.Options();
@@ -258,8 +281,8 @@ public class MainActivity extends AppCompatActivity {
 
         Matrix matrix = new Matrix();
         matrix.setRotate(rotationAngle, (float) bm.getWidth() / 2, (float) bm.getHeight() / 2);
-        rotatedBitmap = Bitmap.createBitmap(bm, 0, 0, bounds.outWidth, bounds.outHeight, matrix, true);
-        capturedImage.setImageBitmap(rotatedBitmap);
+        selectedBitmap = Bitmap.createBitmap(bm, 0, 0, bounds.outWidth, bounds.outHeight, matrix, true);
+        capturedImage.setImageBitmap(selectedBitmap);
     }
 
     private boolean isNetworkAvailable() {
