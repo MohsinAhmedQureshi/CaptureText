@@ -3,7 +3,9 @@ package com.techlogix.capturetext;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -11,6 +13,7 @@ import android.widget.Toast;
 public class DetectedTextActivity extends AppCompatActivity {
 
     TextView detectedText, confidenceText, languagesText;
+    String text;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,13 +21,15 @@ public class DetectedTextActivity extends AppCompatActivity {
         setContentView(R.layout.activity_detected_text);
 
         detectedText = (TextView) findViewById(R.id.detectedText);
-        detectedText.setText(getIntent().getStringExtra("TranslatedText"));
+        text = getIntent().getStringExtra("TranslatedText");
+        detectedText.setText(text);
 
         confidenceText = (TextView) findViewById(R.id.confidenceLevel);
         confidenceText.setText(getIntent().getStringExtra("ConfidenceText"));
 
         languagesText = (TextView) findViewById(R.id.detectedLanguages);
         languagesText.setText(getIntent().getStringExtra("LanguagesText"));
+
     }
 
     public void onClickCopy(View view) {
@@ -32,5 +37,41 @@ public class DetectedTextActivity extends AppCompatActivity {
         ClipData clip = ClipData.newPlainText("Detected Text", detectedText.getText().toString().trim());
         clipboardManager.setPrimaryClip(clip);
         Toast.makeText(this, "Text Copied.", Toast.LENGTH_SHORT).show();
+    }
+
+    public void onClickShare(View view) {
+        parseText(text);
+    }
+
+    public void parseText(String text) {
+        String number = "", email = "";
+        String[] lines = text.split("\n");
+        boolean numeric;
+        Double num = 0.0;
+
+        for (String line : lines) {
+
+            numeric = true;
+            try {
+                num = Double.parseDouble(text);
+            } catch (NumberFormatException e) {
+                numeric = false;
+            }
+
+            if (line.contains("@"))
+                email = line;
+            else if (numeric)
+                number = Double.toString(num);
+        }
+
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(DetectedTextActivity.this, R.style.Theme_AppCompat_DayNight_Dialog_Alert);
+        builder.setTitle("Results")
+                .setMessage("Email: " + email + "\nNumber: " + number)
+                .show();
+
+        Log.d("NUMBER FIELD", "Number: " + number);
+        Log.d("EMAIL FIELD", "Email: " + email);
+
     }
 }
