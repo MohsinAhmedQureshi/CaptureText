@@ -2,6 +2,7 @@ package com.techlogix.capturetext;
 
 import android.Manifest;
 import android.annotation.TargetApi;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -25,6 +26,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -44,6 +46,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import io.fabric.sdk.android.Fabric;
+
 public class MainActivity extends AppCompatActivity {
 
     public static final int PERMISSION_REQUEST_CODE = 123;
@@ -60,6 +64,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Fabric.with(this, new Crashlytics());
         setContentView(R.layout.activity_main);
 
         capturedImage = (ImageView) findViewById(R.id.capturedImage);
@@ -89,6 +94,12 @@ public class MainActivity extends AppCompatActivity {
     public void onClickDetect(View v) {
         FirebaseApp firebaseApp = FirebaseApp.initializeApp(MainActivity.this);
         FirebaseVisionImage image = FirebaseVisionImage.fromBitmap(selectedBitmap);
+
+        // Progress dialog pops up here
+        Dialog dialog = new Dialog(MainActivity.this);
+        dialog.setContentView(R.layout.dialog_progress);
+        dialog.show();
+
         if (isNetworkAvailable()) {
             // NETWORK AVAILABLE ------- ONLINE DETECTOR
 
@@ -116,6 +127,7 @@ public class MainActivity extends AppCompatActivity {
                                 for (FirebaseVisionCloudText.Block block : page.getBlocks()) {
                                     numBlocks++;
                                     Rect boundingBox = block.getBoundingBox();
+
                                     List<FirebaseVisionCloudText.DetectedLanguage> blockLanguages = block.getTextProperty().getDetectedLanguages();
                                     float blockConfidence = block.getConfidence();
                                     avgBlockConfidence += blockConfidence;
@@ -292,4 +304,7 @@ public class MainActivity extends AppCompatActivity {
         return activeNetworkInfo != null && activeNetworkInfo.isConnectedOrConnecting();
     }
 
+    public void onClickCrash(View view) {
+        Crashlytics.getInstance().crash();
+    }
 }

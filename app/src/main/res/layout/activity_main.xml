@@ -37,6 +37,13 @@
         android:textSize="38sp"
         android:textStyle="italic" />
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="8dp"
+        android:onClick="onClickCrash"
+        android:text="CRASH" />
 
     <ImageView
         android:id="@+id/capturedImage"

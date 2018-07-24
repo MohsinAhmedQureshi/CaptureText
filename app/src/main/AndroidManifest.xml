@@ -9,6 +9,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -17,7 +18,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name="com.techlogix.capturetext.MainActivity">
+        <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -35,17 +36,21 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
-        <activity android:name="com.techlogix.capturetext.DetectedTextActivity"></activity>
+        <activity android:name=".DetectedTextActivity" />
 
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
-
         <meta-data
             android:name="com.google.firebase.ml.vision.DEPENDENCIES"
             android:value="text" />
         <!-- To use multiple models: android:value="text,model2,model3" -->
 
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="053881077d8283e30eed68910eab69a0c3fd10ad" />
+
+        <activity android:name=".FormActivity"></activity>
     </application>
 
 </manifest>
