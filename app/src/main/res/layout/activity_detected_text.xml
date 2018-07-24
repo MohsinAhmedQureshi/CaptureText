@@ -185,7 +185,7 @@
                     android:layout_height="0dp"
                     android:layout_weight="1"
                     android:fontFamily="@font/quicksand_medium"
-                    android:text="Share"
+                    android:text="FORM"
                     android:textAlignment="center"
                     android:textAppearance="@style/Base.TextAppearance.AppCompat.Button"
                     android:textColor="@color/colorPrimary" />

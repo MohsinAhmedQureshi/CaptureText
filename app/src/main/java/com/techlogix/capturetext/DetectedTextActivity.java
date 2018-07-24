@@ -2,6 +2,7 @@ package com.techlogix.capturetext;
 
 import android.content.ClipData;
 import android.content.ClipboardManager;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -40,7 +41,9 @@ public class DetectedTextActivity extends AppCompatActivity {
     }
 
     public void onClickShare(View view) {
-        parseText(text);
+//        parseText(text);
+        Intent intent = new Intent(DetectedTextActivity.this, FormActivity.class);
+        startActivity(intent);
     }
 
     public void parseText(String text) {

@@ -18,7 +18,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity
+            android:name=".MainActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -36,7 +38,9 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
-        <activity android:name=".DetectedTextActivity" />
+        <activity
+            android:name=".DetectedTextActivity"
+            android:screenOrientation="portrait" />
 
         <meta-data
             android:name="preloaded_fonts"
@@ -50,7 +54,12 @@
             android:name="io.fabric.ApiKey"
             android:value="053881077d8283e30eed68910eab69a0c3fd10ad" />
 
-        <activity android:name=".FormActivity"></activity>
+        <activity
+            android:name=".FormActivity"
+            android:screenOrientation="portrait">
+
+        </activity>
+
     </application>
 
 </manifest>

@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">Capture Text</string>
+    <string-array name="detectedTextList">
+        <item> John Doe </item>
+        <item> Techlogix </item>
+        <item> JohnDoe@gmail.com </item>
+        <item> +923343416821 </item>
+        <item> www.JohnDoe.com </item>
+    </string-array>
 </resources>

@@ -96,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
         FirebaseVisionImage image = FirebaseVisionImage.fromBitmap(selectedBitmap);
 
         // Progress dialog pops up here
-        Dialog dialog = new Dialog(MainActivity.this);
+        final Dialog dialog = new Dialog(MainActivity.this);
         dialog.setContentView(R.layout.dialog_progress);
         dialog.show();
 
@@ -155,6 +155,7 @@ public class MainActivity extends AppCompatActivity {
                             intent.putExtra("TranslatedText", text);
                             intent.putExtra("ConfidenceText", confidenceText);
                             intent.putExtra("LanguagesText", languagesText);
+                            dialog.dismiss();
                             startActivity(intent);
                         }
                     })
@@ -181,6 +182,7 @@ public class MainActivity extends AppCompatActivity {
                         text = text.concat(block.getText() + "\n");
                     }
                     intent.putExtra("TranslatedText", text);
+                    dialog.dismiss();
                     startActivity(intent);
                 }
             }).addOnFailureListener(new OnFailureListener() {
