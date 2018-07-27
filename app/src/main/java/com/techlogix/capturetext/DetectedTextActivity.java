@@ -4,12 +4,13 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 
 public class DetectedTextActivity extends AppCompatActivity {
 
@@ -40,9 +41,11 @@ public class DetectedTextActivity extends AppCompatActivity {
         Toast.makeText(this, "Text Copied.", Toast.LENGTH_SHORT).show();
     }
 
-    public void onClickShare(View view) {
+    public void onClickForm(View view) {
 //        parseText(text);
         Intent intent = new Intent(DetectedTextActivity.this, FormActivity.class);
+        intent.putExtra("BitmapImageUri", getIntent().getStringExtra("BitmapImageUri"));
+        intent.putExtra("DetectedText", text);
         startActivity(intent);
     }
 

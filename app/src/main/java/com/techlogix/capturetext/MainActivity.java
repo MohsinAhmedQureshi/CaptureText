@@ -17,9 +17,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.support.annotation.NonNull;
-import android.support.v4.content.FileProvider;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.util.SparseIntArray;
 import android.view.View;
@@ -38,6 +35,7 @@ import com.google.firebase.ml.vision.common.FirebaseVisionImage;
 import com.google.firebase.ml.vision.text.FirebaseVisionText;
 import com.google.firebase.ml.vision.text.FirebaseVisionTextDetector;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -46,6 +44,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
 import io.fabric.sdk.android.Fabric;
 
 public class MainActivity extends AppCompatActivity {
@@ -70,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
         capturedImage = (ImageView) findViewById(R.id.capturedImage);
     }
 
-    @TargetApi(27)
+    @TargetApi(28)
     public void onClickScan(View view) {
         if (checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_NETWORK_STATE) == PackageManager.PERMISSION_GRANTED)
             dispatchTakePictureIntent();
@@ -155,6 +156,7 @@ public class MainActivity extends AppCompatActivity {
                             intent.putExtra("TranslatedText", text);
                             intent.putExtra("ConfidenceText", confidenceText);
                             intent.putExtra("LanguagesText", languagesText);
+                            intent.putExtra("BitmapImageUri", getImageUri(MainActivity.this, selectedBitmap).toString());
                             dialog.dismiss();
                             startActivity(intent);
                         }
@@ -182,6 +184,7 @@ public class MainActivity extends AppCompatActivity {
                         text = text.concat(block.getText() + "\n");
                     }
                     intent.putExtra("TranslatedText", text);
+                    intent.putExtra("BitmapImageUri", getImageUri(MainActivity.this, selectedBitmap).toString());
                     dialog.dismiss();
                     startActivity(intent);
                 }
@@ -308,5 +311,12 @@ public class MainActivity extends AppCompatActivity {
 
     public void onClickCrash(View view) {
         Crashlytics.getInstance().crash();
+    }
+
+    private Uri getImageUri(Context context, Bitmap inImage) {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        String path = MediaStore.Images.Media.insertImage(context.getContentResolver(), inImage, "Title", null);
+        return Uri.parse(path);
     }
 }

@@ -16,26 +16,38 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
+            <ImageView
+                android:id="@+id/capturedImage"
+                android:layout_width="match_parent"
+                android:layout_height="260dp"
+                android:layout_margin="32dp"
+                android:background="@drawable/round_outline"
+                android:outlineProvider="background"
+                android:padding="4dp" />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
-                <android.support.design.widget.TextInputLayout
-                    style="@style/Widget.Design.TextInputLayout"
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="7">
+                    android:layout_weight="7"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true">
 
-                    <android.support.design.widget.TextInputEditText
+                    <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/nameET"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/quicksand_medium"
                         android:hint="Name"
+                        android:inputType="textPersonName"
                         android:textSize="20sp" />
 
-                </android.support.design.widget.TextInputLayout>
+                </com.google.android.material.textfield.TextInputLayout>
 
                 <Spinner
                     android:id="@+id/nameSpinner"
@@ -55,21 +67,24 @@
                 android:layout_marginTop="16dp"
                 android:orientation="horizontal">
 
-                <android.support.design.widget.TextInputLayout
-                    style="@style/Widget.Design.TextInputLayout"
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="7">
+                    android:layout_weight="7"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true">
 
-                    <android.support.design.widget.TextInputEditText
+                    <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/companyET"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/quicksand_medium"
+                        android:inputType="textCapWords"
                         android:hint="Company"
                         android:textSize="20sp" />
 
-                </android.support.design.widget.TextInputLayout>
+                </com.google.android.material.textfield.TextInputLayout>
 
                 <Spinner
                     android:id="@+id/companySpinner"
@@ -89,21 +104,24 @@
                 android:layout_marginTop="16dp"
                 android:orientation="horizontal">
 
-                <android.support.design.widget.TextInputLayout
-                    style="@style/Widget.Design.TextInputLayout"
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="7">
+                    android:layout_weight="7"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true">
 
-                    <android.support.design.widget.TextInputEditText
+                    <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/emailET"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/quicksand_medium"
+                        android:inputType="textEmailAddress"
                         android:hint="Email"
                         android:textSize="20sp" />
 
-                </android.support.design.widget.TextInputLayout>
+                </com.google.android.material.textfield.TextInputLayout>
 
                 <Spinner
                     android:id="@+id/emailSpinner"
@@ -123,21 +141,24 @@
                 android:layout_marginTop="16dp"
                 android:orientation="horizontal">
 
-                <android.support.design.widget.TextInputLayout
-                    style="@style/Widget.Design.TextInputLayout"
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="7">
+                    android:layout_weight="7"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true">
 
-                    <android.support.design.widget.TextInputEditText
+                    <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/numberET"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/quicksand_medium"
-                        android:hint="Number"
+                        android:hint="Phone"
+                        android:inputType="phone"
                         android:textSize="20sp" />
 
-                </android.support.design.widget.TextInputLayout>
+                </com.google.android.material.textfield.TextInputLayout>
 
                 <Spinner
                     android:id="@+id/numberSpinner"
@@ -157,21 +178,24 @@
                 android:layout_marginTop="16dp"
                 android:orientation="horizontal">
 
-                <android.support.design.widget.TextInputLayout
-                    style="@style/Widget.Design.TextInputLayout"
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="7">
+                    android:layout_weight="7"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true">
 
-                    <android.support.design.widget.TextInputEditText
+                    <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/websiteET"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/quicksand_medium"
+                        android:inputType="textUri"
                         android:hint="Website"
                         android:textSize="20sp" />
 
-                </android.support.design.widget.TextInputLayout>
+                </com.google.android.material.textfield.TextInputLayout>
 
                 <Spinner
                     android:id="@+id/websiteSpinner"
