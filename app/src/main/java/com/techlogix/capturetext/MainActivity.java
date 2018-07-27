@@ -57,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "Rotation Value Error";
     private static final String TAG2 = "Image Creation Error";
     private static final SparseIntArray ORIENTATIONS = new SparseIntArray();
+    private static Uri compressedImageUri;
     ImageView capturedImage;
     String mCurrentPhotoPath;
     Uri savedPhotoUri;
@@ -94,7 +95,14 @@ public class MainActivity extends AppCompatActivity {
 
     public void onClickDetect(View v) {
         FirebaseApp firebaseApp = FirebaseApp.initializeApp(MainActivity.this);
-        FirebaseVisionImage image = FirebaseVisionImage.fromBitmap(selectedBitmap);
+        compressedImageUri = getImageUri(MainActivity.this, selectedBitmap);
+        Bitmap compressedBitmap = selectedBitmap;
+        try {
+            compressedBitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), compressedImageUri);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        FirebaseVisionImage image = FirebaseVisionImage.fromBitmap(compressedBitmap);
 
         // Progress dialog pops up here
         final Dialog dialog = new Dialog(MainActivity.this);
@@ -156,7 +164,8 @@ public class MainActivity extends AppCompatActivity {
                             intent.putExtra("TranslatedText", text);
                             intent.putExtra("ConfidenceText", confidenceText);
                             intent.putExtra("LanguagesText", languagesText);
-                            intent.putExtra("BitmapImageUri", getImageUri(MainActivity.this, selectedBitmap).toString());
+//                            intent.putExtra("BitmapImageUri", getImageUri(MainActivity.this, selectedBitmap).toString());
+                            intent.putExtra("BitmapImageUri", compressedImageUri.toString());
                             dialog.dismiss();
                             startActivity(intent);
                         }
@@ -315,7 +324,7 @@ public class MainActivity extends AppCompatActivity {
 
     private Uri getImageUri(Context context, Bitmap inImage) {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        inImage.compress(Bitmap.CompressFormat.JPEG, 5, bytes);
         String path = MediaStore.Images.Media.insertImage(context.getContentResolver(), inImage, "Title", null);
         return Uri.parse(path);
     }
