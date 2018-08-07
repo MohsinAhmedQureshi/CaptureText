@@ -3,6 +3,7 @@ package com.techlogix.capturetext;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
@@ -72,8 +73,8 @@ public class FormActivity extends AppCompatActivity {
         // ***
         // EXTREMELY BAD PRACTICE!!! CHANGE TO ASYNC TASK WHEN DONE WITH APP FUNCTIONALITY
         // ***
-//        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-//        StrictMode.setThreadPolicy(policy);
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
 
         String text = getIntent().getStringExtra("DetectedText");
         ArrayList<String> textLines = new ArrayList<>();
