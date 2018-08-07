@@ -3,7 +3,6 @@ package com.techlogix.capturetext;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
@@ -38,6 +37,8 @@ import androidx.appcompat.app.AppCompatActivity;
 public class FormActivity extends AppCompatActivity {
 
     EditText name, company, email, number, website;
+    String phoneNumber = "";
+    private ArrayList<String> domains = new ArrayList<>();
     private GoogleCredential mCredential;
     private CloudNaturalLanguage mApi = new CloudNaturalLanguage.Builder(
             new NetHttpTransport(),
@@ -71,8 +72,8 @@ public class FormActivity extends AppCompatActivity {
         // ***
         // EXTREMELY BAD PRACTICE!!! CHANGE TO ASYNC TASK WHEN DONE WITH APP FUNCTIONALITY
         // ***
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
+//        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+//        StrictMode.setThreadPolicy(policy);
 
         String text = getIntent().getStringExtra("DetectedText");
         ArrayList<String> textLines = new ArrayList<>();
@@ -174,9 +175,16 @@ public class FormActivity extends AppCompatActivity {
             }
         });
 
+        boolean phoneNumberFlag = true;
         StringBuilder textEntities = new StringBuilder();
-        for (String str : text.split("\n"))
+        for (String str : text.split("\n")) {
+            final String checkStr = str.replaceAll("[^\\dA-Za-z ]", "");
+            if (phoneNumberFlag && checkStr.matches("\\d+")) {
+                phoneNumberFlag = false;
+                phoneNumber = str;
+            }
             textEntities.append(str).append(".").append("\n");
+        }
         String textNew = textEntities.toString();
 
         setAccessToken(getAccessToken());
@@ -232,5 +240,62 @@ public class FormActivity extends AppCompatActivity {
         }
         for (Entity e : entities)
             Log.d("Entity Val", "deliverResponse: Entity Name: " + e.getName() + "\t\tEntity Type: " + e.getType());
+
+        domains.add(".com");
+        domains.add(".org");
+        domains.add(".net");
+        domains.add(".us");
+        domains.add(".ca");
+        domains.add(".fr");
+        domains.add(".in");
+        domains.add(".pk");
+        domains.add(".nl");
+        domains.add(".uk");
+        domains.add(".ru");
+        domains.add(".br");
+        domains.add(".es");
+        domains.add(".cn");
+        domains.add(".no");
+        domains.add(".co");
+        domains.add(".int");
+        domains.add(".mil");
+        domains.add(".edu");
+        domains.add(".gov");
+        domains.add(".biz");
+        domains.add(".info");
+        domains.add(".mobi");
+        domains.add(".ly");
+        domains.add(".name");
+        domains.add(".jobs");
+        domains.add(".tech");
+
+        boolean nameFlag = true, organizationFlag = true, locationFlag = true, websiteFlag = true;
+        String person = "", organization = "", email = "", location = "", website = "";
+        for (EntityInfo e : array)
+            if (nameFlag && e.type.equalsIgnoreCase("Person")) {
+                person = e.name;
+                nameFlag = false;
+            } else if (organizationFlag && e.type.equalsIgnoreCase("Organization")) {
+                organization = e.name;
+                organizationFlag = false;
+            } else if (locationFlag && e.type.equalsIgnoreCase("Location")) {
+                location = e.name;
+                locationFlag = false;
+            } else if (websiteFlag && !e.name.contains("@") && e.type.equalsIgnoreCase("Other")) {
+                for (String d : domains)
+                    if (e.name.contains(d)) {
+                        websiteFlag = false;
+                        website = e.name;
+                        break;
+                    }
+            } else if (e.name.contains("@") && e.type.equalsIgnoreCase("Other"))
+                email = e.name;
+
+        Log.d("Person Name: ", person);
+        Log.d("Organization Name: ", organization);
+        Log.d("Location: ", location);
+        Log.d("Email: ", email);
+        Log.d("Website: ", website);
+        Log.d("Phone Number: ", phoneNumber);
     }
 }
