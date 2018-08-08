@@ -43,7 +43,7 @@ public class DetectedTextActivity extends AppCompatActivity {
 
     public void onClickForm(View view) {
 //        parseText(text);
-        Intent intent = new Intent(DetectedTextActivity.this, FormActivity.class);
+        Intent intent = new Intent(DetectedTextActivity.this, FormActivityNew.class);
         intent.putExtra("BitmapImageUri", getIntent().getStringExtra("BitmapImageUri"));
         intent.putExtra("DetectedText", text);
         startActivity(intent);

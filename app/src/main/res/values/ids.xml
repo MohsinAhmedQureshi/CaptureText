@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="ids">
+        <item name="et1" type="id" />
+        <item name="et2" type="id" />
+        <item name="et3" type="id" />
+        <item name="et4" type="id" />
+        <item name="et5" type="id" />
+        <item name="et6" type="id" />
+        <item name="et7" type="id" />
+        <item name="et8" type="id" />
+        <item name="et9" type="id" />
+    </array>
+</resources>

@@ -9,7 +9,6 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
-import android.graphics.Rect;
 import android.media.ExifInterface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -18,7 +17,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
-import android.util.SparseIntArray;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -39,7 +37,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -56,9 +53,8 @@ public class MainActivity extends AppCompatActivity {
     static final int REQUEST_TAKE_PHOTO = 1;
     private static final String TAG = "Rotation Value Error";
     private static final String TAG2 = "Image Creation Error";
-    private static final SparseIntArray ORIENTATIONS = new SparseIntArray();
     private static Uri compressedImageUri;
-    ImageView capturedImage;
+    ImageView capturedImage, nextBtn;
     String mCurrentPhotoPath;
     Uri savedPhotoUri;
     Bitmap selectedBitmap;
@@ -67,9 +63,16 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Fabric.with(this, new Crashlytics());
-        setContentView(R.layout.activity_main);
 
-        capturedImage = (ImageView) findViewById(R.id.capturedImage);
+        View decorView = getWindow().getDecorView();
+        // Hide the status bar.
+        int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
+        decorView.setSystemUiVisibility(uiOptions);
+
+        setContentView(R.layout.activity_main_new);
+
+        capturedImage = findViewById(R.id.capturedImage);
+        nextBtn = findViewById(R.id.nextBtn);
     }
 
     @TargetApi(28)
@@ -118,53 +121,11 @@ public class MainActivity extends AppCompatActivity {
                     .addOnSuccessListener(new OnSuccessListener<FirebaseVisionCloudText>() {
                         @Override
                         public void onSuccess(FirebaseVisionCloudText firebaseVisionCloudText) {
-                            Intent intent = new Intent(getApplicationContext(), DetectedTextActivity.class);
+                            Intent intent = new Intent(getApplicationContext(), FormActivityNew.class);
                             String text = firebaseVisionCloudText.getText();
                             Log.d("Detected Text: ", text);
 
-                            double avgBlockConfidence = 0.0;
-                            int numBlocks = 0;
-                            List<FirebaseVisionCloudText.DetectedLanguage> detectedLanguages = new ArrayList<>();
-
-                            for (FirebaseVisionCloudText.Page page : firebaseVisionCloudText.getPages()) {
-                                List<FirebaseVisionCloudText.DetectedLanguage> languages = page.getTextProperty().getDetectedLanguages();
-                                int height = page.getHeight();
-                                int width = page.getWidth();
-                                float confidence = page.getConfidence();
-                                Log.d("Page Confidence", "Page Confidence: " + confidence);
-
-                                for (FirebaseVisionCloudText.Block block : page.getBlocks()) {
-                                    numBlocks++;
-                                    Rect boundingBox = block.getBoundingBox();
-
-                                    List<FirebaseVisionCloudText.DetectedLanguage> blockLanguages = block.getTextProperty().getDetectedLanguages();
-                                    float blockConfidence = block.getConfidence();
-                                    avgBlockConfidence += blockConfidence;
-                                    Log.d("Block Confidence", "Block Confidence: " + blockConfidence);
-
-                                    detectedLanguages.addAll(blockLanguages);
-                                    // And so on: Paragraph, Word, Symbol
-
-                                }
-                            }
-
-                            avgBlockConfidence /= numBlocks;
-                            String confidenceText;
-                            if (avgBlockConfidence <= 0.5)
-                                confidenceText = avgBlockConfidence + " --- Low Confidence";
-                            else if (avgBlockConfidence > 0.5 && avgBlockConfidence < 0.8)
-                                confidenceText = avgBlockConfidence + " --- Moderate Confidence";
-                            else
-                                confidenceText = avgBlockConfidence + " --- High Confidence";
-
-                            String languagesText = "";
-                            for (FirebaseVisionCloudText.DetectedLanguage lang : detectedLanguages)
-                                languagesText = languagesText.concat(lang.getLanguageCode() + ", ");
-
                             intent.putExtra("TranslatedText", text);
-                            intent.putExtra("ConfidenceText", confidenceText);
-                            intent.putExtra("LanguagesText", languagesText);
-//                            intent.putExtra("BitmapImageUri", getImageUri(MainActivity.this, selectedBitmap).toString());
                             intent.putExtra("BitmapImageUri", compressedImageUri.toString());
                             dialog.dismiss();
                             startActivity(intent);
@@ -185,7 +146,7 @@ public class MainActivity extends AppCompatActivity {
             detector.detectInImage(image).addOnSuccessListener(new OnSuccessListener<FirebaseVisionText>() {
                 @Override
                 public void onSuccess(FirebaseVisionText firebaseVisionText) {
-                    Intent intent = new Intent(getApplicationContext(), DetectedTextActivity.class);
+                    Intent intent = new Intent(getApplicationContext(), FormActivityNew.class);
                     List<FirebaseVisionText.Block> blockList = firebaseVisionText.getBlocks();
                     String text = "";
                     for (FirebaseVisionText.Block block : blockList) {
@@ -273,6 +234,7 @@ public class MainActivity extends AppCompatActivity {
                 selectedBitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
                 // Log.d(TAG, String.valueOf(bitmap));
                 capturedImage.setImageBitmap(selectedBitmap);
+                nextBtn.setImageResource(R.drawable.next_btn);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -310,6 +272,8 @@ public class MainActivity extends AppCompatActivity {
         selectedBitmap = Bitmap.createBitmap(bm, 0, 0, bounds.outWidth, bounds.outHeight, matrix, true);
 
         capturedImage.setImageBitmap(selectedBitmap);
+        nextBtn.setImageResource(R.drawable.next_btn);
+
     }
 
     private boolean isNetworkAvailable() {
