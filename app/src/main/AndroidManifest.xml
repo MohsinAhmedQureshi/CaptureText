@@ -58,8 +58,14 @@
         <activity
             android:name=".FormActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateHidden"></activity>
-        <activity android:name=".FormActivityNew"></activity>
+            android:windowSoftInputMode="stateHidden">
+
+        </activity>
+
+        <activity android:name=".FormActivityNew">
+
+        </activity>
+
     </application>
 
 </manifest>

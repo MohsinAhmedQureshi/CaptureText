@@ -7,8 +7,6 @@
         <item> Email </item>
         <item> Website </item>
         <item> Mobile Phone </item>
-        <item> Work Phone </item>
-        <item> Fax </item>
         <item> Address </item>
     </string-array>
 </resources>

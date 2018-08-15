@@ -235,6 +235,12 @@ public class MainActivity extends AppCompatActivity {
                 // Log.d(TAG, String.valueOf(bitmap));
                 capturedImage.setImageBitmap(selectedBitmap);
                 nextBtn.setImageResource(R.drawable.next_btn);
+                nextBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        onClickDetect(view);
+                    }
+                });
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -273,6 +279,12 @@ public class MainActivity extends AppCompatActivity {
 
         capturedImage.setImageBitmap(selectedBitmap);
         nextBtn.setImageResource(R.drawable.next_btn);
+        nextBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onClickDetect(view);
+            }
+        });
 
     }
 

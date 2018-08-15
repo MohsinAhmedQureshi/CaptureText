@@ -5,10 +5,10 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.provider.MediaStore;
+import android.util.ArrayMap;
 import android.util.Log;
-import android.view.View;
-import android.view.ViewTreeObserver;
 import android.widget.ImageView;
+import android.widget.ListView;
 
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
@@ -30,24 +30,24 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 public class FormActivityNew extends AppCompatActivity implements DataTransferInterface {
 
     String phoneNumber = "";
     Pattern p = Pattern.compile("(?:\\(\\d{3}\\)|\\d{3}[-]*)\\d{3}[-]*\\d{4}");
     private ArrayList<Integer> formIDs;
-    private RecyclerView form;
-    private RecyclerView.Adapter mAdapter;
-    private RecyclerView.LayoutManager mLayoutManager;
+    //    private RecyclerView form;
+    private ListView form;
+    //    private RecyclerView.Adapter mAdapter;
+    private CustomAdapter mAdapter;
+    //    private RecyclerView.LayoutManager mLayoutManager;
     private String[] formHints;
     private ArrayList<String> domains = new ArrayList<>();
     private GoogleCredential mCredential;
-    private Uri imageUri;
     private CloudNaturalLanguage mApi = new CloudNaturalLanguage.Builder(
             new NetHttpTransport(),
             JacksonFactory.getDefaultInstance(),
@@ -62,17 +62,19 @@ public class FormActivityNew extends AppCompatActivity implements DataTransferIn
     private String email;
     private String location;
     private String website;
+    private Map<String, String> entitiesMap = new ArrayMap<>();
+    private ArrayList<String> textLines;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_form_new);
+        setContentView(R.layout.activity_form);
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
         String text = getIntent().getStringExtra("TranslatedText");
-        ArrayList<String> textLines = new ArrayList<>();
+        textLines = new ArrayList<>();
         textLines.add("");
         Collections.addAll(textLines, text.split("\n"));
 
@@ -87,17 +89,16 @@ public class FormActivityNew extends AppCompatActivity implements DataTransferIn
         }
 
         formIDs = new ArrayList<>();
+        for (int i = 0; i < 9; i++)
+            formIDs.add(getResources().getIdentifier("et" + i, "id", getPackageName()));
 
         formHints = getResources().getStringArray(R.array.formHints);
 
-        form = findViewById(R.id.formRecyclerView);
-        form.setHasFixedSize(true);
+        form = findViewById(R.id.formListView);
+//        form.setHasFixedSize(true);
 
-        mLayoutManager = new LinearLayoutManager(this);
-        form.setLayoutManager(mLayoutManager);
-
-        mAdapter = new MyAdapter(FormActivityNew.this, formHints, textLines, FormActivityNew.this);
-        form.setAdapter(mAdapter);
+//        mLayoutManager = new LinearLayoutManager(this);
+//        form.setLayoutManager(mLayoutManager);
 
         ///////////////////////////////////////////////////////////////////////////
 
@@ -223,58 +224,82 @@ public class FormActivityNew extends AppCompatActivity implements DataTransferIn
             } else if (e.name.contains("@") && e.type.equalsIgnoreCase("Other"))
                 email = e.name;
 
+//        final View listView = findViewById(R.id.formListView);
+//        listView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+//            @Override
+//            public void onGlobalLayout() {
+//                //At this point the layout is complete and the
+//                //dimensions of recyclerView and any child views are known.
+//            }
+//        });
 
-        final View recyclerView = findViewById(R.id.formRecyclerView);
-        recyclerView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                //At this point the layout is complete and the
-                //dimensions of recyclerView and any child views are known.
-                Log.d("Person Name: ", person);
-                if (!person.isEmpty()) {
-                    if (person.contains(" ")) {
-                        String names[] = person.split(" ");
-                        final TextInputEditText firstNameET = findViewById(formIDs.get(0));
-                        final TextInputEditText lastNameET = findViewById(formIDs.get(1));
-                        firstNameET.setText(names[0]);
-                        lastNameET.setText(names[names.length - 1]);
-                    } else {
-                        final TextInputEditText personET = findViewById(formIDs.get(0));
-                        Log.d("Person ET Text", "onGlobalLayout: " + person);
-                        personET.setText(person);
-                    }
-                }
-                Log.d("Organization Name: ", organization);
-                if (!organization.isEmpty()) {
-                    final TextInputEditText companyET = findViewById(formIDs.get(2));
-                    companyET.setText(organization);
-                }
-                Log.d("Location: ", location);
-                if (!location.isEmpty()) {
-                    final TextInputEditText addressET = findViewById(formIDs.get(8));
-                    addressET.setText(location);
-                }
-                Log.d("Email: ", email);
-                if (!email.isEmpty()) {
-                    final TextInputEditText emailET = findViewById(formIDs.get(3));
-                    emailET.setText(email);
-                }
-                Log.d("Website: ", website);
-                if (!website.isEmpty()) {
-                    final TextInputEditText websiteET = findViewById(formIDs.get(4));
-                    websiteET.setText(website);
-                }
-                Log.d("Phone Number: ", phoneNumber);
-                if (!phoneNumber.isEmpty()) {
-                    final TextInputEditText phoneET = findViewById(formIDs.get(5));
-                    phoneET.setText(phoneNumber);
-                }
-                recyclerView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+        Log.d("Person Name: ", person);
+        if (!person.isEmpty()) {
+            if (person.contains(" ")) {
+                String names[] = person.split(" ");
+                final TextInputEditText firstNameET = findViewById(formIDs.get(0));
+                final TextInputEditText lastNameET = findViewById(formIDs.get(1));
+
+//                        firstNameET.setText(names[0]);
+//                        lastNameET.setText(names[names.length - 1]);
+                entitiesMap.put(formHints[0], names[0]);
+                entitiesMap.put(formHints[1], names[names.length - 1]);
+            } else {
+                final TextInputEditText personET = findViewById(formIDs.get(0));
+                Log.d("Person ET Text", "onGlobalLayout: " + person);
+//                        personET.setText(person);
+                entitiesMap.put(formHints[0], person);
+                entitiesMap.put(formHints[1], "");
             }
-        });
+        } else {
+            entitiesMap.put(formHints[0], "");
+            entitiesMap.put(formHints[1], "");
+        }
+        Log.d("Organization Name: ", organization);
+        if (!organization.isEmpty()) {
+            final TextInputEditText companyET = findViewById(formIDs.get(2));
+//                    companyET.setText(organization);
+            entitiesMap.put(formHints[2], organization);
+        } else {
+            entitiesMap.put(formHints[2], "");
+        }
+        Log.d("Email: ", email);
+        if (!email.isEmpty()) {
+            final TextInputEditText emailET = findViewById(formIDs.get(3));
+//                    emailET.setText(email);
+            entitiesMap.put(formHints[3], email);
+        } else {
+            entitiesMap.put(formHints[3], "");
+        }
+        Log.d("Website: ", website);
+        if (!website.isEmpty()) {
+            final TextInputEditText websiteET = findViewById(formIDs.get(4));
+//                    websiteET.setText(website);
+            entitiesMap.put(formHints[4], website);
+        } else {
+            entitiesMap.put(formHints[4], "");
+        }
+        Log.d("Phone Number: ", phoneNumber);
+        if (!phoneNumber.isEmpty()) {
+            final TextInputEditText phoneET = findViewById(formIDs.get(5));
+//                    phoneET.setText(phoneNumber);
+            entitiesMap.put(formHints[5], phoneNumber);
+        } else {
+            entitiesMap.put(formHints[5], "");
+        }
+        Log.d("Location: ", location);
+        if (!location.isEmpty()) {
+            final TextInputEditText addressET = findViewById(formIDs.get(8));
+//                    addressET.setText(location);
+            entitiesMap.put(formHints[6], location);
+        } else {
+            entitiesMap.put(formHints[6], location);
+        }
 
-
+        mAdapter = new CustomAdapter(FormActivityNew.this, formHints, textLines, FormActivityNew.this, entitiesMap);
+        form.setAdapter(mAdapter);
     }
+
 
     @Override
     public void setValues(int id) {

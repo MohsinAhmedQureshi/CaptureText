@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#651FFF</color>
-    <color name="colorPrimaryDark">#651FFF</color>
-    <color name="colorAccent">#651FFF</color>
+    <color name="colorPrimary">#009bd4</color>
+    <color name="colorPrimaryDark">#006da2</color>
+    <color name="colorPrimaryLight">#5fccff</color>
+    <color name="colorAccent">#006da2</color>
+    <color name="background">#FFFFFF</color>
+    <color name="surface">#99009bd4</color>
     <color name="Blue_Grey_50">#ECEFF1</color>
     <color name="Purple_A400">#651FFF</color>
 </resources>

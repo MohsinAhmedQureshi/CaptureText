@@ -31,6 +31,20 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    sourceSets {
+        main {
+            java {
+                exclude '**/FormActivity.java'
+                exclude '**/MyAdapter.java'
+            }
+        }
+        androidTest {
+            java {
+                exclude '**/FormActivity.java'
+                exclude '**/MyAdapter.java'
+            }
+        }
+    }
 }
 
 ext {
