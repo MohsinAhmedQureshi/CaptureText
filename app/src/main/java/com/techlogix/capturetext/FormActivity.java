@@ -32,55 +32,42 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 public class FormActivity extends AppCompatActivity {
 
-    EditText name, company, email, number, website;
-    String phoneNumber = "";
+    private EditText fName, lName, company, email, website, mPhone, wPhone, address;
+    private Spinner fNameSpinner, lNameSpinner, companySpinner, emailSpinner, websiteSpinner, mPhoneSpinner, wPhoneSpinner, addressSpinner;
+
+    private ArrayList<EditText> ETs;
+    private ArrayList<Spinner> Spinners;
+
+    private Pattern p = Pattern.compile("(?:\\(\\d{3}\\)|\\d{3}[-]*)\\d{3}[-]*\\d{4}");
     private ArrayList<String> domains = new ArrayList<>();
     private GoogleCredential mCredential;
-    private CloudNaturalLanguage mApi = new CloudNaturalLanguage.Builder(
-            new NetHttpTransport(),
-            JacksonFactory.getDefaultInstance(),
-            new HttpRequestInitializer() {
-                @Override
-                public void initialize(HttpRequest request) throws IOException {
-                    mCredential.initialize(request);
-                }
-            }).build();
-    private Uri imageUri;
-
-    @Override
-    public void onBackPressed() {
-
-        if (!name.isFocused() && !company.isFocused() && !email.isFocused() && !number.isFocused() && !website.isFocused()) {
-            super.onBackPressed();
-        } else {
-            name.clearFocus();
-            company.clearFocus();
-            email.clearFocus();
-            number.clearFocus();
-            website.clearFocus();
-        }
-    }
+    private CloudNaturalLanguage mApi;
+    private ArrayList<String> textLines;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_form);
 
-        // ***
-        // EXTREMELY BAD PRACTICE!!! CHANGE TO ASYNC TASK WHEN DONE WITH APP FUNCTIONALITY
-        // ***
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
-        String text = getIntent().getStringExtra("DetectedText");
-        ArrayList<String> textLines = new ArrayList<>();
+        initialize();
+
+        Log.d("Form Activity", "onCreate: Spinners List Size: " + Spinners.size());
+
+        String text = getIntent().getStringExtra("TranslatedText");
         textLines.add("");
         Collections.addAll(textLines, text.split("\n"));
+
+        for (int i = 0; i < Spinners.size(); i++)
+            initializeSpinner(ETs.get(i), Spinners.get(i), textLines);
 
         final ImageView capturedImage = findViewById(R.id.capturedImage);
         final Uri imageUri = Uri.parse(getIntent().getStringExtra("BitmapImageUri"));
@@ -92,98 +79,17 @@ public class FormActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        Spinner spinnerName = findViewById(R.id.nameSpinner);
-        Spinner spinnerCompany = findViewById(R.id.companySpinner);
-        Spinner spinnerEmail = findViewById(R.id.emailSpinner);
-        Spinner spinnerNumber = findViewById(R.id.numberSpinner);
-        Spinner spinnerWebsite = findViewById(R.id.websiteSpinner);
-
-        name = findViewById(R.id.nameET);
-        company = findViewById(R.id.companyET);
-        email = findViewById(R.id.emailET);
-        number = findViewById(R.id.numberET);
-        website = findViewById(R.id.websiteET);
-
-        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, textLines);
-        spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-
-        spinnerName.setAdapter(spinnerArrayAdapter);
-        spinnerName.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                name.setText(parent.getItemAtPosition(position).toString());
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
-
-        spinnerCompany.setAdapter(spinnerArrayAdapter);
-        spinnerCompany.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                company.setText(parent.getItemAtPosition(position).toString());
-
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
-
-        spinnerEmail.setAdapter(spinnerArrayAdapter);
-        spinnerEmail.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                email.setText(parent.getItemAtPosition(position).toString());
-
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
-
-        spinnerNumber.setAdapter(spinnerArrayAdapter);
-        spinnerNumber.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                number.setText(parent.getItemAtPosition(position).toString());
-
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
-
-        spinnerWebsite.setAdapter(spinnerArrayAdapter);
-        spinnerWebsite.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                website.setText(parent.getItemAtPosition(position).toString());
-
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
+        ///////////////////////////////////////////////////////////////////////////
 
         boolean phoneNumberFlag = true;
         StringBuilder textEntities = new StringBuilder();
         for (String str : text.split("\n")) {
-            final String checkStr = str.replaceAll("[^\\dA-Za-z ]", "");
+            String checkStr = str.replaceAll("[a-zA-Z+]", "");
+            checkStr = checkStr.replace(" ", "");
             if (phoneNumberFlag && checkStr.matches("\\d+")) {
+                Log.d("NumberCheck", "onCreate: " + checkStr);
                 phoneNumberFlag = false;
-                phoneNumber = str;
+                mPhone.setText(str);
             }
             textEntities.append(str).append(".").append("\n");
         }
@@ -201,6 +107,121 @@ public class FormActivity extends AppCompatActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+    }
+
+    private void initialize() {
+        ETs = new ArrayList<>();
+        Spinners = new ArrayList<>();
+        textLines = new ArrayList<>();
+
+        fName = findViewById(R.id.firstNameET);
+        fNameSpinner = findViewById(R.id.firstNameSpinner);
+
+        ETs.add(fName);
+        Spinners.add(fNameSpinner);
+
+        lName = findViewById(R.id.lastNameET);
+        lNameSpinner = findViewById(R.id.lastNameSpinner);
+
+        ETs.add(lName);
+        Spinners.add(lNameSpinner);
+
+        company = findViewById(R.id.companyET);
+        companySpinner = findViewById(R.id.companySpinner);
+
+        ETs.add(company);
+        Spinners.add(companySpinner);
+
+        email = findViewById(R.id.emailET);
+        emailSpinner = findViewById(R.id.emailSpinner);
+
+        ETs.add(email);
+        Spinners.add(emailSpinner);
+
+        website = findViewById(R.id.websiteET);
+        websiteSpinner = findViewById(R.id.websiteSpinner);
+
+        ETs.add(website);
+        Spinners.add(websiteSpinner);
+
+        mPhone = findViewById(R.id.mobilePhoneET);
+        mPhoneSpinner = findViewById(R.id.mobilePhoneSpinner);
+
+        ETs.add(mPhone);
+        Spinners.add(mPhoneSpinner);
+
+        wPhone = findViewById(R.id.workPhoneET);
+        wPhoneSpinner = findViewById(R.id.workPhoneSpinner);
+
+        ETs.add(wPhone);
+        Spinners.add(wPhoneSpinner);
+
+        address = findViewById(R.id.addressET);
+        addressSpinner = findViewById(R.id.addressSpinner);
+
+        ETs.add(address);
+        Spinners.add(addressSpinner);
+
+        mApi = new CloudNaturalLanguage.Builder(
+                new NetHttpTransport(),
+                JacksonFactory.getDefaultInstance(),
+                new HttpRequestInitializer() {
+                    @Override
+                    public void initialize(HttpRequest request) throws IOException {
+                        mCredential.initialize(request);
+                    }
+                }).build();
+
+        domains.add(".com");
+        domains.add(".org");
+        domains.add(".net");
+        domains.add(".us");
+        domains.add(".ca");
+        domains.add(".fr");
+        domains.add(".in");
+        domains.add(".pk");
+        domains.add(".nl");
+        domains.add(".uk");
+        domains.add(".ru");
+        domains.add(".br");
+        domains.add(".es");
+        domains.add(".cn");
+        domains.add(".no");
+        domains.add(".co");
+        domains.add(".int");
+        domains.add(".mil");
+        domains.add(".edu");
+        domains.add(".gov");
+        domains.add(".biz");
+        domains.add(".info");
+        domains.add(".mobi");
+        domains.add(".ly");
+        domains.add(".name");
+        domains.add(".jobs");
+        domains.add(".tech");
+    }
+
+    private void initializeSpinner(EditText editText, Spinner spinner, ArrayList<String> menuItems) {
+
+        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<>(FormActivity.this, android.R.layout.simple_spinner_item, menuItems);
+        spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        final EditText et = editText;
+
+        spinner.setAdapter(spinnerArrayAdapter);
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (position != 0)
+                    et.setText(parent.getItemAtPosition(position).toString());
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
     }
 
     private String getAccessToken() {
@@ -230,7 +251,6 @@ public class FormActivity extends AppCompatActivity {
                         .setDocument(new Document().setContent(text).setType("PLAIN_TEXT"))));
     }
 
-
     private void deliverResponse(GenericJson response) {
         Log.d("Deliver Response Called", "deliverResponse: ");
 
@@ -243,61 +263,38 @@ public class FormActivity extends AppCompatActivity {
         for (Entity e : entities)
             Log.d("Entity Val", "deliverResponse: Entity Name: " + e.getName() + "\t\tEntity Type: " + e.getType());
 
-        domains.add(".com");
-        domains.add(".org");
-        domains.add(".net");
-        domains.add(".us");
-        domains.add(".ca");
-        domains.add(".fr");
-        domains.add(".in");
-        domains.add(".pk");
-        domains.add(".nl");
-        domains.add(".uk");
-        domains.add(".ru");
-        domains.add(".br");
-        domains.add(".es");
-        domains.add(".cn");
-        domains.add(".no");
-        domains.add(".co");
-        domains.add(".int");
-        domains.add(".mil");
-        domains.add(".edu");
-        domains.add(".gov");
-        domains.add(".biz");
-        domains.add(".info");
-        domains.add(".mobi");
-        domains.add(".ly");
-        domains.add(".name");
-        domains.add(".jobs");
-        domains.add(".tech");
 
-        boolean nameFlag = true, organizationFlag = true, locationFlag = true, websiteFlag = true;
-        String person = "", organization = "", email = "", location = "", website = "";
+        boolean nameFlag = true, organizationFlag = true, locationFlag = true, websiteFlag = true, emailFlag = true;
+
         for (EntityInfo e : array)
             if (nameFlag && e.type.equalsIgnoreCase("Person")) {
-                person = e.name;
+
+                if (e.name.contains(" ")) {
+                    String names[] = e.name.split(" ");
+                    fName.setText(names[0]);
+                    lName.setText(names[names.length - 1]);
+                } else {
+                    fName.setText(e.name);
+                }
+
                 nameFlag = false;
             } else if (organizationFlag && e.type.equalsIgnoreCase("Organization")) {
-                organization = e.name;
+                company.setText(e.name);
                 organizationFlag = false;
-            } else if (locationFlag && e.type.equalsIgnoreCase("Location")) {
-                location = e.name;
-                locationFlag = false;
+            } else if (emailFlag && e.name.contains("@") && e.type.equalsIgnoreCase("Other")) {
+                email.setText(e.name);
+                emailFlag = false;
             } else if (websiteFlag && !e.name.contains("@") && e.type.equalsIgnoreCase("Other")) {
                 for (String d : domains)
                     if (e.name.contains(d)) {
                         websiteFlag = false;
-                        website = e.name;
+                        website.setText(e.name);
                         break;
                     }
-            } else if (e.name.contains("@") && e.type.equalsIgnoreCase("Other"))
-                email = e.name;
-
-        Log.d("Person Name: ", person);
-        Log.d("Organization Name: ", organization);
-        Log.d("Location: ", location);
-        Log.d("Email: ", email);
-        Log.d("Website: ", website);
-        Log.d("Phone Number: ", phoneNumber);
+            } else if (locationFlag && e.type.equalsIgnoreCase("Location")) {
+                address.setText(e.name);
+                locationFlag = false;
+            }
     }
+
 }

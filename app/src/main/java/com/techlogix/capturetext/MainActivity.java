@@ -121,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
                     .addOnSuccessListener(new OnSuccessListener<FirebaseVisionCloudText>() {
                         @Override
                         public void onSuccess(FirebaseVisionCloudText firebaseVisionCloudText) {
-                            Intent intent = new Intent(getApplicationContext(), FormActivityNew.class);
+                            Intent intent = new Intent(getApplicationContext(), FormActivity.class);
                             String text = firebaseVisionCloudText.getText();
                             Log.d("Detected Text: ", text);
 
@@ -146,7 +146,7 @@ public class MainActivity extends AppCompatActivity {
             detector.detectInImage(image).addOnSuccessListener(new OnSuccessListener<FirebaseVisionText>() {
                 @Override
                 public void onSuccess(FirebaseVisionText firebaseVisionText) {
-                    Intent intent = new Intent(getApplicationContext(), FormActivityNew.class);
+                    Intent intent = new Intent(getApplicationContext(), FormActivity.class);
                     List<FirebaseVisionText.Block> blockList = firebaseVisionText.getBlocks();
                     String text = "";
                     for (FirebaseVisionText.Block block : blockList) {

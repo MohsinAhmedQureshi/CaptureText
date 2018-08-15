@@ -34,13 +34,13 @@ android {
     sourceSets {
         main {
             java {
-                exclude '**/FormActivity.java'
+                exclude '**/FormActivityOld.java'
                 exclude '**/MyAdapter.java'
             }
         }
         androidTest {
             java {
-                exclude '**/FormActivity.java'
+                exclude '**/FormActivityOld.java'
                 exclude '**/MyAdapter.java'
             }
         }
