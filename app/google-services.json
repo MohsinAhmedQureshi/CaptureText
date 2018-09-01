@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "970983131598",
+    "firebase_url": "https://tlx-mobility.firebaseio.com",
+    "project_id": "tlx-mobility",
+    "storage_bucket": "tlx-mobility.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:970983131598:android:b8a70650dde68f1d",
+        "android_client_info": {
+          "package_name": "com.techlogix.capturetext"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "970983131598-gft97qekqlctl9jead1tl0l040c1fuus.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC-1QcBjLNYggCzAmL2pmiohG07zP4Sa0k"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

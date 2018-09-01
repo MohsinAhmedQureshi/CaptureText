@@ -73,9 +73,9 @@ public class CustomAdapter extends ArrayAdapter<String> {
             viewHolder.spinner.setAdapter(spinnerArrayAdapter);
             viewHolder.spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
-                public void onItemSelected(AdapterView<?> parent, View view, int spinnerPosition, long id) {
-                    if (spinnerPosition != 0)
-                        viewHolder.editText.setText(parent.getItemAtPosition(spinnerPosition).toString());
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    if (position != 0)
+                        viewHolder.editText.setText(parent.getItemAtPosition(position).toString());
                 }
 
                 @Override
@@ -89,6 +89,24 @@ public class CustomAdapter extends ArrayAdapter<String> {
             convertView.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
+
+            spinnerArrayAdapter = new ArrayAdapter<>(mContext, android.R.layout.simple_spinner_item, mTextLines);
+            spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+            viewHolder.spinner.setAdapter(spinnerArrayAdapter);
+            viewHolder.spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    if (position != 0)
+                        viewHolder.editText.setText(parent.getItemAtPosition(position).toString());
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+
+                }
+            });
+
             result = convertView;
         }
 
